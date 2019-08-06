@@ -12,14 +12,13 @@ The code related to this article is available at [GitHub](https://github.com/ben
 
 I first created an empty solution in Visual Studio and added a WebAPI project target .Net Core 2.2.  
 
-![WebAPI](/asset/WebAPI.png)
-
+![WebAPI](/Asset/WebAPI.PNG)
 
 I am using MS Sql Server so I am looking for 'Microsoft.EntityFrameworkCore.SqlServer' using Nuget Package for EntityFramework.    
 
 Right click on the project and click 'Manage NuGet Package' and select the latest stable version which is currently at 2.2.6.  
 
-![EntityFramework](/asset/AddEntityFramework.PNG)  
+![Add EF](Asset/AddEntityFramework.PNG)  
 
 I am going to use code-first migration and therefore, I am also adding reference to 'Microsoft.EntityFrameworkCore.Design'.  
 
@@ -188,25 +187,25 @@ Since I am using SQLServer, I am adding sqlserver option in ConfigureServices in
 With these changes, above, I am ready to create a migration using entity framework. In the package manager console in visual studio, run the following command:
 	Add-Migration InitialCreate
 
-![EntityFramework](/asset/Add-Migration.PNG)  
+![EntityFramework](Asset/Add-Migration.PNG)  
 
 After the command runs, the migration has been created. This will be evident the Solution Explorer. The migration folder contains migration files and design files. The content of these can be viewed in the code repository. In short, the migrations are instructions for database, in this example, to create tables and the relationships.
 
-![AddedMigration](/asset/AddedMigrations.PNG)
+![AddedMigration](Asset/AddedMigrations.PNG)
 
 Now the migrations have been added, I can update the database so that migration can be applied. To do this, run the following command in package manager console:
 	
 	Update-database
 When the above command runs, it creates tables and any updates defined in the migrations to the configured database. At this time, I can look at my SSMS for those tables in the ApplicationDb database.
 
-![DatabaseAndTables](/asset/Databaseandtables.PNG)
+![DatabaseAndTables](Asset/Databaseandtables.PNG)
 
 ##Summary
 In this article, I provided an step-wise approach to add EntityFramework Code-First approach to .Net Core project. Because, I do not necessarily work on adding EntityFramework to a project everyday, the steps are hard to remember and these steps are involve careful execution. I used example for a WebAPI project, but these steps are equally applicable for MVC, or library projects. Finally, I used MS SQL Server as database. But depending on the need, the steps can be used to connect with other databases with minor changes in configuration. I am hoping this will help someone and I welcome comments and suggestions. 
 
 ##References  
 
-[Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/)
+[Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/)  
 [Entity Framework Core to an Existing ASP.NET Core Project](https://elanderson.net/2018/04/add-entity-framework-core-to-an-existing-asp-net-core-project)  
 [Connection Strings](https://docs.microsoft.com/en-us/ef/core/miscellaneous/connection-strings)
 [GitHub Code](https://github.com/benktesh/AutotrackEntityChange.git)  
