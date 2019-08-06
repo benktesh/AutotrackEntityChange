@@ -1,8 +1,8 @@
 # Add EntityFrameworkCore to an existing project .Net Core Project 
   
 
-##Introduction  
-I work with EntityFramework everyday, but I do not add an EntityFramework (EF) to an existing project everyday. Time and again, I have to create new project or add EntityFramework to the existing project and I decided to document the steps.  
+## Introduction  
+I work with EntityFramework every day, but I do not add an EntityFramework (EF) to an existing project every day. Time and again, I have to create new project or add EntityFramework to the existing project and I decided to document the steps.  
 
 In this article, I am going to show how to get started with EntityFramework. I am going to start with a project without support to EntityFramework and add the EF support to the project and use migration to update the database. I am using Visual Studio 2017, MS SQL Server with SQL Server Management Studio and EntityFrameworkCore with .Net Core SDK 2.2.  
 
@@ -28,7 +28,7 @@ I am going to update the appsetting.json file for connection string. I am using 
 		"DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=ApplicationDb;Trusted_Connection=True;"
 	  }
 
-##Configure Database and Models
+## Configure Database and Models
 I am going to organize code related to Entity Framework in a separate folder. Therefore, I am adding a folder 'DBContenxt' within the project. Next, I am going to add the tables in my database using code-first method.  
 
 I am going to add three tables namely Customer, Contact, CustomerContact. The code example shows additional two additional classes IAuditable, and Audit. The purpose of the Audit table is to store change history happening in all the tables and IAuditable is an interface to unify the Auditable property. These are there for additional work, can be ignored for now. There are a number of Enums which are used to provide type information for customer data. Customer and Contact entity have many to many relationships and thus I added CustomerContact entity to store the relationship. 
@@ -183,7 +183,7 @@ Since I am using SQLServer, I am adding sqlserver option in ConfigureServices in
 	services.AddDbContext<ApplicationDbContext>(options =>
     	options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-##Add Migration and Update Database
+## Add Migration and Update Database
 With these changes, above, I am ready to create a migration using entity framework. In the package manager console in visual studio, run the following command:
 	Add-Migration InitialCreate
 
@@ -200,10 +200,10 @@ When the above command runs, it creates tables and any updates defined in the mi
 
 ![DatabaseAndTables](Asset/Databaseandtables.PNG)
 
-##Summary
+## Summary
 In this article, I provided an step-wise approach to add EntityFramework Code-First approach to .Net Core project. Because, I do not necessarily work on adding EntityFramework to a project everyday, the steps are hard to remember and these steps are involve careful execution. I used example for a WebAPI project, but these steps are equally applicable for MVC, or library projects. Finally, I used MS SQL Server as database. But depending on the need, the steps can be used to connect with other databases with minor changes in configuration. I am hoping this will help someone and I welcome comments and suggestions. 
 
-##References  
+## References  
 
 [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/)  
 [Entity Framework Core to an Existing ASP.NET Core Project](https://elanderson.net/2018/04/add-entity-framework-core-to-an-existing-asp-net-core-project)  
