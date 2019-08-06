@@ -1,4 +1,4 @@
-# Add EntityFrameworkCore to an existing project .Net Core Project 
+# Add EntityFrameworkCore to a .Net Core Project 
   
 
 ## Introduction  
