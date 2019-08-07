@@ -1,5 +1,5 @@
-# Automatically create change log as Audit using EntityFramework in a .Net Core Project 
-  
+
+# Add EntityFrameworkCore to a .Net Core Project 
 
 ## Introduction  
 I work with EntityFramework every day, but I do not add an EntityFramework (EF) to an existing project every day. Time and again, I have to create new project or add EntityFramework to the existing project and I decided to document the steps.  

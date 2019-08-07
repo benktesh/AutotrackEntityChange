@@ -1,14 +1,44 @@
-# Add EntityFrameworkCore to a .Net Core Project 
+# Automatically create change log as Audit using EntityFramework in a .Net Core Project
   
 
 ## Introduction  
-I work with EntityFramework every day, but I do not add an EntityFramework (EF) to an existing project every day. Time and again, I have to create new project or add EntityFramework to the existing project and I decided to document the steps.  
+It is often needed to track the changes in the field in data-driven applications. Such tracking is needed for getting answers to the questions like following:  
 
-In this article, I am going to show how to get started with EntityFramework. I am going to start with a project without support to EntityFramework and add the EF support to the project and use migration to update the database. I am using Visual Studio 2017, MS SQL Server with SQL Server Management Studio and EntityFrameworkCore with .Net Core SDK 2.2.  
+- Who changed?
+- What changed?
+- How is the latest change compare with the old values? 
+- When did the change take place? etc.  
+
+These changes can be displayed in the view as part of history. The answer to these questions can be considered as audit log or change log. A conventional way of tracking the changes is to populate the change somewhere in the table. With the EntityFrame work, these changes can be tracked automatically with some code change. In addition, the auto-tracking of changes will work for any tables that will be added to the application in future provided that the new tables follow the same convention as in the original tables. 
+ 
+In this article, I am going to present one simple design where such changes can be tracked and stored in the database using Entity Framework without having to manage the change tracking process. The benefit of this design is that it can track any or all of the tables and change tracking can be made at a centralized location, i.e. just before the actual update in the database. The changes themselves will be stored on a separate table which can be retrieved along with the main records for downstream processes.
+
+In this article, I am going to show how to get started with EntityFramework. I am going to use a .Net Core Web API project in which EF support has already been added. If you need to know how to add the EF support to a project, please refer to my article [Adding EntityFrameworkCore Support to .NET Core Project](https://www.codeproject.com/Articles/5164086/Adding-EntityFrameworkCore-Support-to-NET-Core-Pro). I am using Visual Studio 2017, MS SQL Server with SQL Server Management Studio and EntityFrameworkCore with .Net Core SDK 2.2.  
 
 The code related to this article is available at [GitHub](https://github.com/benktesh/AutotrackEntityChange). 
 
-##Create Solution and Project
+## Audit Log Design
+In this example, I am going to use the following schema to store the Audit Log.
+
+		public class Audit
+	    {
+	        public Guid Id { get; set; }	
+	        public Guid? EntityId { get; set; }	
+	        public string User { get; set; }	
+	        public String Entity { get; set; }	
+	        public DateTime DateTime { get; set; }	
+	        public string ColumnName { get; set; }	
+	        public String OldValue { get; set; }	
+	        public String NewValue { get; set; }	
+	        public EntityStateChangeTypeEnum ChangeType { get; set; }
+	    }
+
+In this table, I expect to store the name of the table in "Entity", RecordID in "EntityId", User who made the change, Date and Time of change, Field that was changed as "ColumnName", old and new values, and finally changetype. ChangeType is defined as enum where valid values are add, remove, update. 
+
+For example, if a Customer data is added, the end result is that the Audit table contains rows for each of the fields in Customer. 
+
+
+
 
 I first created an empty solution in Visual Studio and added a WebAPI project target .Net Core 2.2.  
 
@@ -40,52 +70,33 @@ I am going to add three tables namely Customer, Contact, CustomerContact. The co
 	
 	namespace AutotrackEntityChange.DBContext
 	{
-   
 	    public class Customer : IAuditable
 	    {
 	        public Guid Id { get; set; }
-	
 	        public String AccountNumber { get; set; }
-	
 	        public String Name { get; set; }
-	
 	        public DateTime? CreatedDate { get; set; }
-	
 	        public DateTime? ModifiedDate { get; set; }
-	
 	        public String LastModifiedBy { get; set; }
-	
 	        public bool IsInactive { get; set; }
-	
 	        public ICollection<CustomerContact> CustomerContacts { get; set; }
 	    }
 	
 	    public class Contact : IAuditable
 	    {
 	
-	        public Guid Id { get; set; }
-	
-	        public String Name { get; set; }
-	
-	        public String Title { get; set; }
-	
-	        public String Phone { get; set; }
-	
-	        public String Email { get; set; }
-	
-	        public ContactTypeEnum ContactType { get; set; }
-	
-	        public String Note { get; set; }
-	
-	        public DateTime? CreatedDate { get; set; }
-	
-	        public DateTime? ModifiedDate { get; set; }
-	
-	        public String LastModifiedBy { get; set; }
-	
+	        public Guid Id { get; set; }	
+	        public String Name { get; set; }	
+	        public String Title { get; set; }	
+	        public String Phone { get; set; }	
+	        public String Email { get; set; }	
+	        public ContactTypeEnum ContactType { get; set; }	
+	        public String Note { get; set; }	
+	        public DateTime? CreatedDate { get; set; }	
+	        public DateTime? ModifiedDate { get; set; }	
+	        public String LastModifiedBy { get; set; }	
 	        public bool IsInactive { get; set; }
-	        public ICollection<CustomerContact> CustomerContacts { get; set; }
-	
+	        public ICollection<CustomerContact> CustomerContacts { get; set; }	
 	    }
 	
 	    public class CustomerContact:IAuditable
@@ -103,23 +114,14 @@ I am going to add three tables namely Customer, Contact, CustomerContact. The co
 	
 	    public class Audit
 	    {
-	
-	        public Guid Id { get; set; }
-	
-	        public Guid? EntityId { get; set; }
-	
-	        public string User { get; set; }
-	
-	        public String Entity { get; set; }
-	
-	        public DateTime DateTime { get; set; }
-	
-	        public string ColumnName { get; set; }
-	
-	        public String OldValue { get; set; }
-	
-	        public String NewValue { get; set; }
-	
+	        public Guid Id { get; set; }	
+	        public Guid? EntityId { get; set; }	
+	        public string User { get; set; }	
+	        public String Entity { get; set; }	
+	        public DateTime DateTime { get; set; }	
+	        public string ColumnName { get; set; }	
+	        public String OldValue { get; set; }	
+	        public String NewValue { get; set; }	
 	        public EntityStateChangeTypeEnum ChangeType { get; set; }
 	
 	    }
